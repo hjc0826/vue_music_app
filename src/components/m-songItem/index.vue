@@ -4,13 +4,16 @@
 			<div class="gradients"></div>
 			<img alt="" v-lazy="itemData.picUrl ? itemData.picUrl : itemData.song.album.picUrl">
 		</div>
-		<p class="play_count">
+		<p class="play_count" v-if="!(itemData.type)">
 				<i class="iconfont icon-erji"></i>
-				{{itemData.trackCount}}ä¸‡
+				{{itemData.trackCount}}Íò
 		</p>
 		<div class="text">
 			<p class="name">
 				{{itemData.name}}
+			</p>
+			<p class="anchor">
+				{{itemData.type ? itemData.song.artists[0].name : ''}}
 			</p>
 		</div>
 	</div>
@@ -21,13 +24,16 @@
 		name:'MSongItem',
 		props:{
 			itemData : [Object]
+		},
+		mounted(){
+			
 		}
 	}
 </script>
 
 <style lang="stylus" scoped>
 	.item
-		width 33%
+		width 33.33%
 		box-sizing border-box
 		padding 0 1%
 		display flex
@@ -64,4 +70,8 @@
 			margin-bottom 10px
 			font-size 11px
 			float left
+			.name
+				overflow hidden
+				white-space nowrap
+				text-overflow ellipsis
 </style>

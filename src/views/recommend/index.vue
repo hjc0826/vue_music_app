@@ -80,7 +80,7 @@
 				width 100%
 				overflow hidden
 				.recommend_list
-					background-image linear-gradient(#d44439, #d44439 8%, white 8%)
+					background-image linear-gradient(#d44439, #d44439 5%, white 5%)
 					position relative
 					box-sizing border-box
 					text-align center
