@@ -6,7 +6,7 @@
 		</div>
 		<p class="play_count" v-if="!(itemData.type)">
 				<i class="iconfont icon-erji"></i>
-				{{itemData.trackCount}}Íò
+				{{itemData.trackCount}}W
 		</p>
 		<div class="text">
 			<p class="name">
