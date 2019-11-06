@@ -14,7 +14,13 @@ const routes = [
   },
   {
     path: '/singer',
-  	component : ()=> import('@/views/singer')
+  	component : ()=> import('@/views/singer'),
+	children : [
+		{
+			path : ':sid',
+			component : ()=> import('@/components/m-singerItem')
+		}
+	]
   },
   {
 	path: '/',

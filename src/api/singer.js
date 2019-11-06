@@ -8,3 +8,12 @@ export const getArtistsList = params => {
 		params
 	})
 }
+
+// 获取歌手作品
+export const getArtistsDetail = params => {
+	return http({
+		url : '/artists',
+		method: 'get',
+		params
+	})
+}

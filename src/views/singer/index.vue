@@ -6,7 +6,7 @@
 					<li v-for="(unit,index) in sortBy" :key="unit" ref="$box" :class="auto_fixed">
 						<h4>{{unit}}</h4>
 						<ul>
-							<li v-for="(item,index) in artists[unit]" :key="item.id">
+							<li v-for="(item,index) in artists[unit]" :key="item.id" @click="jumpToDetail(item.id)">
 								<img v-lazy="item.img1v1Url" alt="" class="head_photo">
 								<span class="name">{{item.name}}</span>
 							</li>
@@ -20,6 +20,9 @@
 				</ul>
 			</div>
 		</div>
+		<transition>
+			<router-view />
+		</transition>
 	</div>
 </template>
 
@@ -126,12 +129,32 @@
 			jumpScroll(index){
 				// console.log(this.$refs.$box[index].scrollTop)
 				this.$refs.wrapper.scrollTop = this.heightArr[index]
+			},
+			// 打开详情页面
+			jumpToDetail(sid){
+				this.$refs.$box.forEach( item => {
+					item.className = " ";
+				})
+				this.$router.push("/singer/" + sid)
 			}
 		},
 		}
 </script>
 
 <style lang="stylus" scpoed>
+	.v-enter{
+		transform: translateX(100vw);
+		opacity: 0;
+	}
+	.v-leave-to{
+		transform: translateX(-100vw);
+		opacity :0
+	}
+	/* v-enter-active【入场动画的时间段】 */
+	/* v-leave-active【离场动画的时间段】 */
+	.v-enter-active, .v-leave-active {
+		transition: 0.5s all ease;
+	}
 	.singer
 		position fixed
 		top 88px
@@ -193,7 +216,6 @@
 				font-family Helvetica
 				transform translateY(-50%)
 				top 50%
-				z-index 30
 				ul
 					list-style none
 					li

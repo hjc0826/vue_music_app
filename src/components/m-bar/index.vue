@@ -21,7 +21,6 @@
 		width 100%
 		background-color #d44439
 		position relative
-		z-index 101
 		.tab_item
 			flex 1
 			text-align center

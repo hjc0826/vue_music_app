@@ -30,7 +30,6 @@
 	background-color #d44439
 	text-align center
 	position relative
-	z-index 100
 	.text
 		line-height 44px
 		font-weight bold
