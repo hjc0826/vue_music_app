@@ -1,7 +1,7 @@
 <template>
-	<div class="rank_item">
+	<div class="rank_item" @click="handleChildClick">
 		<div class="icon">
-			<img :src="itemData.coverImgUrl" alt="">
+			<img :src="itemData.coverImgUrl" alt="" >
 		</div>
 		<ul class="song_list">
 			<li v-for="(unit,index) in itemData.tracks.slice(0,3)" :key="unit.id">
@@ -17,6 +17,11 @@
 		name: 'MRankItem',
 		props:{
 			itemData : Object
+		},
+		methods:{
+			handleChildClick(){
+				this.$emit('func')
+			}
 		}
 	}
 </script>

@@ -18,3 +18,12 @@ export const newsong = params => {
         params
 	})
 }
+
+// 跳转推荐歌单
+export const recommendList = params => {
+	return http({
+		url:'/playlist/detail',
+        method : 'get',
+        params
+	})
+}

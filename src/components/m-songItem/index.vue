@@ -1,5 +1,5 @@
 <template>
-	<div class="item">
+	<div class="item" @click="jumpRecommend">
 		<div class="icon">
 			<div class="gradients"></div>
 			<img alt="" v-lazy="itemData.picUrl ? itemData.picUrl : itemData.song.album.picUrl">
@@ -27,6 +27,11 @@
 		},
 		mounted(){
 			
+		},
+		methods:{
+			jumpRecommend(){
+				this.$emit('click')
+			}
 		}
 	}
 </script>

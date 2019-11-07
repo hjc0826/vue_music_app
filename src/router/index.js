@@ -6,11 +6,23 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/recommend',
-	component : ()=> import('@/views/recommend')
+	component : ()=> import('@/views/recommend'),
+	children :[
+		{
+			path : ":sid",
+			component : ()=> import('@/components/m-singerItem')
+		}
+	]
   },
   {
     path: '/rank',
-  	component : ()=> import('@/views/rank')
+  	component : ()=> import('@/views/rank'),
+	children : [
+		{
+			path : ':sid',
+			component : ()=> import('@/components/m-singerItem')
+		}
+	]
   },
   {
     path: '/singer',

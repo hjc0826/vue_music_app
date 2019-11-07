@@ -5,7 +5,7 @@
 				<div class="recommend_list">
 					<h1 class="title">推荐歌单</h1>
 						<ul>
-							<MSongItem v-for="item in personalizedData" :key="item.id" :itemData="item" />
+							<MSongItem v-for="item in personalizedData" :key="item.id" :itemData="item" @click="jumoRecommend(item.id)"/>
 						</ul>
 					<div class="recommend_new_song">
 						<h1 class="title">推荐歌曲</h1>
@@ -16,12 +16,13 @@
 				</div>
 			</div>
 		</div>
+		<router-view :artistInfo="artistInfo" :artistListData="artistListData"/>
 	</div>
 </template>
 
 <script>
 	import MSongItem from '@/components/m-songItem'
-	import {personalized,newsong} from '@/api/recommend.js'
+	import {personalized,newsong,recommendList} from '@/api/recommend.js'
 	import BScroll from 'better-scroll'
 	export default{
 		name:'Recommend',
@@ -29,7 +30,9 @@
 			return{
 				// 推荐歌单
 				personalizedData : '',
-				newsongData : ''
+				newsongData : '',
+				artistInfo:'',
+				artistListData :''
 			}
 		},
 		mounted() {
@@ -56,7 +59,16 @@
 			  })
 		},
 		methods:{
-			
+			jumoRecommend(sid){
+				console.log(sid)
+				recommendList({
+					id : sid
+				}).then(res => {
+					this.artistInfo = res.playlist
+					this.artistListData = res.playlist.tracks
+					this.$router.push('/recommend/' + sid)
+				})
+			}
 		},
 		components:{
 			MSongItem

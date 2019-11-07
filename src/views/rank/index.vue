@@ -3,10 +3,13 @@
 		<div class="rank_list">
 			<div class="wrapper" ref="wrapper">
 			<ul>
-				<MRankItem v-for="item in rankListData" :key="item.id" :itemData="item"/>
+				<MRankItem v-for="(item,index) in rankListData" :key="item.id" :itemData="item" @func="jumpRankDetail(item.id,index)"/>
 			</ul>
 			</div>
 		</div>
+		<router-view :artistInfo="artistInfo" :artistListData="artistListData">
+			
+		</router-view>
 	</div>
 </template>
 
@@ -19,7 +22,11 @@
 		data(){
 			return({
 				rankListData : [],
-				MUSIC_APP_TOP : [0,1,2,3,22,23]
+				// 传值使用
+				busData : '',
+				MUSIC_APP_TOP : [0,1,2,3,22,23],
+				artistInfo:'',
+				artistListData :''
 			})
 		},
 		mounted(){
@@ -27,19 +34,9 @@
 				this.getRankItemData(item)
 			})
 			this.$nextTick(() => {
-							//$refs绑定元素
-							if(!this.scroll){
-								this.scroll = new BScroll(this.$refs.wrapper, {
-								//开启点击事件 默认为false
-								click:true
-							})
-							// console.log(this.scroll)
-							}else if(!this.$refs.wrapper){
-								return
-							}
-							else{
-								this.scroll.refresh()
-							}
+					new BScroll(this.$refs.wrapper,{
+						click:true
+					})
 			 })
 		},
 		components:{
@@ -50,6 +47,13 @@
 				rankList(id).then(res => {
 					this.rankListData.push(res.playlist)
 				})
+			},
+			jumpRankDetail(sid,index){
+				console.log(sid,index)
+				this.busData = this.rankListData[index]
+				this.artistInfo = this.busData
+				this.artistListData = this.busData.tracks
+				this.$router.push('rank/' + sid)
 			}
 		}
 	}

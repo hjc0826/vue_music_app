@@ -12,11 +12,14 @@
 			<!-- 滚动内容 -->
 				<div class="wrapper" ref="wrapper">
 					<div class="slide">
-						<div class="bg_image" :style="{backgroundImage:'url(' + artistInfo.img1v1Url + ')'}" ref="$img">
+						<div class="bg_image" :style="bgStyle" ref="$img">
 							<!-- 遮罩层 -->
 							<div class="fitter"></div>
 							<div class="text">
 								<h2 class="list_title">{{artistInfo.name}}</h2>
+								<p class="update">
+									
+								</p>
 							</div>
 						</div>
 						<div class="song_list_wrapper">
@@ -39,8 +42,6 @@
 
 <script>
 	import MSongMenuItem from '@/components/m-songMenuItem'
-	// 获取api接口
-	import {getArtistsDetail} from '@/api/singer.js'
 	import BScroll from 'better-scroll'
 	export default{
 		name: 'SingerItem',
@@ -48,10 +49,13 @@
 			MSongMenuItem,
 			singerSid : {}
 		},
+		props:{
+			artistInfo: [Object],
+			artistListData : [Array]
+		},
 		data(){
 			return({
-				artistInfo : '',
-				artistListData : [],
+				// 配置项
 				imgHeight : '',
 				colorValue : 0,
 				singName : '歌手'
@@ -71,41 +75,25 @@
 			}
 		},
 		mounted(){
-			getArtistsDetail({
-				id : this.$route.params.sid
-			}).then(data => {
-				// 图片高度
-				this.imgHeight = this.$refs.$img.clientWidth * 0.75 - 15
-				// 作家信息
-				this.artistInfo = data.artist
-				// 作家作品
-				this.artistListData = data.hotSongs
 				this.$nextTick(()=>{
+				this.imgHeight = this.$refs.$img.clientWidth * 0.75 - 15
 					var scroll = new BScroll(this.$refs.wrapper,{
 						scrollY: true,
 						click: true,
 						probeType : 3
 					})
-					scroll.on('scroll', this.scrollChangeBac)
-				})
+				scroll.on('scroll', this.scrollChangeBac)
 			})
 		},
 		computed:{
+			bgStyle () {
+				return `background-image: url(${this.artistInfo.coverImgUrl ? this.artistInfo.coverImgUrl : this.artistInfo.img1v1Url})`
+			}
 		}
 	}
 </script>
 
 <style lang="stylus" scoped>
-// 	.v-enter, .v-leave-to {
-// 		transform: translateX(-100vw);
-// 		opacity: 0;
-// 	}
-// 
-// 	/* v-enter-active【入场动画的时间段】 */
-// 	/* v-leave-active【离场动画的时间段】 */
-// 	.v-enter-active, .v-leave-active {
-// 		transition: 0.5s all ease;
-// 	}
 	.singerItem_body
 		position fixed
 		top 0
@@ -177,6 +165,12 @@
 							line-height 18px
 							font-weight bold
 							letter-spacing 1px
+						.update
+							position absolute
+							top 45px
+							left 7px
+							line-height 14px
+							font-size 11px
 				.song_list_wrapper
 					padding 41px 0 20px 0
 					border-radius 10px

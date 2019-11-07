@@ -21,13 +21,13 @@
 			</div>
 		</div>
 		<transition>
-			<router-view />
+			<router-view :artistInfo="artistInfo" :artistListData="artistListData"/>
 		</transition>
 	</div>
 </template>
 
 <script>
-	import { getArtistsList } from '@/api/singer.js'
+	import { getArtistsList ,getArtistsDetail} from '@/api/singer.js'
 	import BScroll from 'better-scroll'
 	import pinyin from 'pinyin'
 	export default{
@@ -49,7 +49,9 @@
 				//区间数组
 				heightArr:[],
 				//当前滚动距离
-				offsetHeight:""
+				offsetHeight:"",
+				artistInfo :'',
+				artistListData :''
 			})
 		},
 		mounted(){
@@ -135,7 +137,14 @@
 				this.$refs.$box.forEach( item => {
 					item.className = " ";
 				})
-				this.$router.push("/singer/" + sid)
+				// 获取歌单列表数据
+				getArtistsDetail({
+					id : sid
+					}).then(res => {
+					this.artistInfo = res.artist
+					this.artistListData = res.hotSongs
+					this.$router.push("/singer/" + sid)
+				})
 			}
 		},
 		}
