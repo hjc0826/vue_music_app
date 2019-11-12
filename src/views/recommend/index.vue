@@ -16,7 +16,9 @@
 				</div>
 			</div>
 		</div>
-		<router-view :artistInfo="artistInfo" :artistListData="artistListData"/>
+		<transition>
+			<router-view :artistInfo="artistInfo" :artistListData="artistListData"/>
+		</transition>
 	</div>
 </template>
 
@@ -77,6 +79,19 @@
 </script>
 
 <style lang="stylus" scoped>
+	.v-enter{
+		transform: translateX(100vw);
+		opacity: 0;
+	}
+	.v-leave-to{
+		transform: translateX(-100vw);
+		opacity :0
+	}
+	/* v-enter-active【入场动画的时间段】 */
+	/* v-leave-active【离场动画的时间段】 */
+	.v-enter-active, .v-leave-active {
+		transition: 0.5s all ease;
+	}
 	.recommend
 		position fixed
 		width 100%

@@ -5,6 +5,7 @@ import store from './store'
 import '@/assets/font/iconfont.css'
 import '@/assets/css/common.css'
 import VueLazyload from 'vue-lazyload'
+import VueBus from 'vue-bus'
 
 Vue.use(VueLazyload, {
   preLoad: 1.3,
@@ -12,6 +13,8 @@ Vue.use(VueLazyload, {
   // loading: 'dist/loading.gif',
   attempt: 2
 })
+
+Vue.use(VueBus)
 
 Vue.config.productionTip = false
 

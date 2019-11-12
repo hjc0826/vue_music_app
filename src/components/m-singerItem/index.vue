@@ -1,7 +1,7 @@
 <template>
 	<div class="singerItem_body">
 		<div class="header" :style="{background : 'rgba(212, 68, 57,' + colorValue + ')'}">
-			<div class="back" @click="$router.go(-1)">
+			<div class="back" @click="openPlay">
 				<i class="iconfont icon-icon-arrow-left2"></i>
 			</div>
 			<div class="text">
@@ -30,7 +30,8 @@
 							</div>
 							<div class="song_list">
 								<ul>
-									<MSongMenuItem v-for="(item,index) in artistListData" :key="item.id" :itemData="item" :index="index"/>
+									<MSongMenuItem v-for="(item,index) in artistListData" :key="item.id" :itemData="item" :index="index"
+									@click.native = "play(item)"/>
 								</ul>
 							</div>
 						</div>
@@ -42,6 +43,7 @@
 
 <script>
 	import MSongMenuItem from '@/components/m-songMenuItem'
+	import Bus from '@/assets/bus'
 	import BScroll from 'better-scroll'
 	export default{
 		name: 'SingerItem',
@@ -72,6 +74,21 @@
 					this.colorValue = 1
 					this.singName = this.artistInfo.name
 				}
+			},
+			// 播放弹出播放器
+			play(item){
+				// this.$store.commit('setCurSongId',{
+				// 	id : id
+				// })
+				this.sendSongData(item)
+				this.$store.state.isMiniPlay = false
+				this.$store.commit('playSwitch')
+			},
+			openPlay(){
+				this.$router.go(-1)
+			},
+			sendSongData(item){
+				Bus.$emit('transportData',item)
 			}
 		},
 		mounted(){
