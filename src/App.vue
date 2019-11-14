@@ -2,8 +2,7 @@
   <div id="app">
 		<MHeader />
 		<MTab />
-		<!-- 播放组件 -->
-		<MPlayer></MPlayer>
+		<MPlayer/>
 		<router-view/>
   </div>
 </template>

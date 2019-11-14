@@ -1,9 +1,10 @@
-import http from './httpRequset'
+import http from './httpRequest.js'
 
-export const = SongMusci = parmas => {
+// 播放音乐地址
+export const SongMusci = params => {
 	return http({
-		url : '/music/url?id=1346104327',
+		url : '/song/url',
 		method : 'get',
-		parmas
+		params
 	})
 }

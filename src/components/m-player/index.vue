@@ -10,17 +10,17 @@
 					<i class="iconfont icon-bottom"></i>
 				</div>
 				<h1 class="title">
-					Z5-DarkSide
+					{{SongInfo.name}}
 				</h1>
 				<h2 class="subtitle">
-					Z5
+					{{SongInfo ? SongInfo.ar[0].name : ''}}
 				</h2>
 			</div>
 			<div class="middle">
 				<div class="middle_one">
 					<div class="cdwrapper">
 						<div class="cd_play">
-							<img src="http://p1.music.126.net/XEW4XCLgFgL7R_grEMHJRw==/109951164475468266.jpg" alt="" class="img">
+							<img :src="SongInfo.al.picUrl" alt="" class="img">
 						</div>
 					</div>
 				</div>
@@ -48,7 +48,7 @@
 						</div>
 					</div>
 					<span class="time time-r">
-						12.00
+						{{slideInfo.playtime}}
 					</span>
 				</div>
 				<div class="opeartor">
@@ -74,14 +74,14 @@
 		<!-- 迷你播放按钮 -->
 		<div class="mine_play" v-show="this.$store.state.isMiniPlay">
 			<div class="icon" @click="closeMiniOpenPlay">
-				<img src="http://p1.music.126.net/XEW4XCLgFgL7R_grEMHJRw==/109951164475468266.jpg" alt="">
+				<img :src="SongInfo.al.picUrl" alt="">
 			</div>
 			<div class="text">
 				<h2 class="name">
-					Z5-DarkSide
+					{{SongInfo.name}}
 				</h2>
 				<p class="desc">
-					Z5
+					{{SongInfo.ar[0].name}}
 				</p>
 			</div>
 			<div class="control">
@@ -92,7 +92,7 @@
 			</div>
 		</div>
 		<strong></strong>
-		<!-- 播放mini列表 -->
+		<!-- 播放mini 列表 -->
 		<transition>
 				<div class="mine_play_list" :class="{shandow:isShandow}" v-show="this.$store.state.isMiniList">
 					<div class="list_wrapper">
@@ -106,29 +106,35 @@
 							</h1>
 						</div>
 						<div class="list_content">
-							<ul>
-								<div>1</div>
-								<div>1</div>
-								<div>1</div>
-								<div>1</div>
-								<div>1</div>
-								<div>1</div>
-								<div>1</div>
-								<div>1</div>
-								<div>1</div>
-								<div>1</div>
-							</ul>
+							<!-- <div class="wrapper"> -->
+								<ul>
+									<div class="item" v-for="(item,index) in this.$store.state.playList" :key="index" @click="playSong(item,index)">
+										<i class="iconfont icon-xiaolaba1" :class="{current: index == indexRed}"></i>
+										<span class="text">{{item.name}}</span>
+										<span class="delete">
+											<i class="iconfont icon-chuyidong"></i>
+										</span>
+									</div>
+								</ul>
+							<!-- </div> -->
 						</div>
 						<div class="list_close" @click="closeList"><span>关闭</span></div>
 					</div>
 				</div>
 		</transition>
-		
+		<audio 
+			id="audio"
+			:src="songLink.url"
+			autoplay="autoplay">
+		</audio>
 	</div>
 </template>
 
 <script>
+	// 播放音乐api
+	import {SongMusci} from '@/api/song.js'
 	import Bus from '@/assets/bus'
+	import BScroll from 'better-scroll'
 	export default{
 		name:'MPlayer',
 		data(){
@@ -136,17 +142,33 @@
 				slideInfo : {
 					startX:'',
 					width : '',
-					precent:''
+					precent:'',
+					playtime:'',
+					playtime_s:''
 				},
 				SongInfo:{},
-				isShandow : false
+				isShandow : false,
+				indexRed : '',
+				songLink:''
 			})
 		},
-		beforeCreate(){
+		created(){
 			this.acceptData()
 		},
 		mounted(){
-			this.slideInfo.width =  document.querySelector('.bar_inner').clientWidth
+			// 228为播放条的宽度
+			this.slideInfo.width =  228
+			this.$nextTick(()=>{
+					var scroll = new BScroll(this.$refs.wrapper,{
+						scrollY: true,
+						click: true,
+						probeType : 3
+					})
+				// scroll.on('scroll', this.scrollChangeBac)
+			})
+			Bus.$on('borplay',item => {
+				this.BorplaySong(item)
+			})
 		},
 		methods:{
 			progressTouchStart(e){
@@ -177,7 +199,6 @@
 			// 接受数据
 			acceptData(){
 				Bus.$on('transportData',(item)=>{
-					console.log(item)
 					this.SongInfo = item
 				})
 			},
@@ -185,13 +206,79 @@
 				this.$store.state.isMiniList = true
 				setTimeout(()=>{
 					this.isShandow = true
-				},400)
+				},500)
 			},
 			closeList(){
 				this.isShandow = false
 				setTimeout(()=>{
 					this.$store.state.isMiniList= false
 				},100)
+			},
+			updated(){
+				// 重置
+				this.$refs.progress.style.width = 0 + 'px'
+			},
+			// 弹出播放页面
+			playSong(item,index){
+				// 渲染数据
+				this.SongInfo = item
+				// 字体变红
+				this.indexRed = index
+				// 共享方法,播放歌曲
+				this.BorplaySong(item)
+			},
+			// 播放方法
+			BorplaySong(item){
+				SongMusci({
+					id : item.id
+				}).then(res=>{
+					this.songLink = res.data[0]
+					console.log(res.data[0])
+					// 获得播放时间
+					this.getDuration()
+				})
+			},
+			// 获取歌曲时长
+			getDuration(){
+				var duration;
+				var myVid = document.getElementById("audio");
+				console.log("duration  ",myVid);
+				if(myVid != null){
+				     myVid.load();
+				     myVid.oncanplay = () => {
+							this.slideInfo.playtime_s = myVid.duration
+							this.slideInfo.playtime = this.exchangeBase(myVid.duration)
+							console.log(this.slideInfo.playtime)
+				      }
+				}
+			},
+			// 秒换算成 h + m + s
+			exchangeBase(value){
+					var secondTime = parseInt(value);// 秒
+					var minuteTime = 0;// 分
+					var hourTime = 0;// 小时
+					if(secondTime > 60) {//如果秒数大于60，将秒数转换成整数
+						//获取分钟，除以60取整数，得到整数分钟
+						minuteTime = parseInt(secondTime / 60);
+						//获取秒数，秒数取佘，得到整数秒数
+						secondTime = parseInt(secondTime % 60);
+						//如果分钟大于60，将分钟转换成小时
+						if(minuteTime > 60) {
+							//获取小时，获取分钟除以60，得到整数小时
+							hourTime = parseInt(minuteTime / 60);
+							//获取小时后取佘的分，获取分钟除以60取佘的分
+							minuteTime = parseInt(minuteTime % 60);
+						}
+					}
+					var result = "" + parseInt(secondTime) + "";
+
+					if(minuteTime > 0) {
+						result = "" + parseInt(minuteTime) + "." + result;
+					}
+					if(hourTime > 0) {
+						result = "" + parseInt(hourTime) + "." + result;
+					}
+					return result;
 			}
 		}
 	}
@@ -462,7 +549,29 @@
 							color #757575
 			.list_content
 				max-height 240px
-				overflow hidden
+				overflow auto
+				.item
+					display flex
+					align-items center
+					height 40px
+					padding 0 30px 0 20px
+					overflow hidden
+					.current
+						color #d44439
+						margin-right 5px
+					.text
+						flex 1
+						text-overflow ellipsis
+						overflow hidden
+						white-space nowrap
+						line-height 20px
+						font-size 14px
+						color #2E3030
+					.delete
+						position relative
+						color #D44439
+						font-size 11px
+						
 			.list_close
 				text-align center
 				line-height 50px

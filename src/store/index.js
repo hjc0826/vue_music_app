@@ -12,7 +12,9 @@ export default new Vuex.Store({
 	  // 是否打开mini列表
 	  isMiniList : false,
 	  // 是否打开mini播放
-	  isMiniPlay: false
+	  isMiniPlay: false,
+	  // 播放列表歌单
+	  playList : []
   },
   mutations: {
 	  playSwitch(state){

@@ -23,14 +23,14 @@
 							</div>
 						</div>
 						<div class="song_list_wrapper">
-							<div class="play_button">
+							<div class="play_button" @click="playAllSongList">
 								<i class="iconfont icon-bofang2"></i>
 								<span class="text">播放全部</span>
 								<span class="count">(共{{artistListData.length}}首)</span>
 							</div>
 							<div class="song_list">
 								<ul>
-									<MSongMenuItem v-for="(item,index) in artistListData" :key="item.id" :itemData="item" :index="index"
+									<MSongMenuItem v-for="(item,index) in artistListData" :itemData="item" :index="index"
 									@click.native = "play(item)"/>
 								</ul>
 							</div>
@@ -45,6 +45,7 @@
 	import MSongMenuItem from '@/components/m-songMenuItem'
 	import Bus from '@/assets/bus'
 	import BScroll from 'better-scroll'
+	import {SongMusci} from '@/api/song.js'
 	export default{
 		name: 'SingerItem',
 		components:{
@@ -63,6 +64,9 @@
 				singName : '歌手'
 			})
 		},
+		mounted() {
+			
+		},
 		methods:{
 			// 根据卷东芝改变header背景颜色
 			scrollChangeBac(e){
@@ -75,20 +79,40 @@
 					this.singName = this.artistInfo.name
 				}
 			},
-			// 播放弹出播放器
+			// 播放弹出播放器 开始播放++++++++++++++++++
 			play(item){
-				// this.$store.commit('setCurSongId',{
-				// 	id : id
-				// })
-				this.sendSongData(item)
 				this.$store.state.isMiniPlay = false
+				this.$store.state.isMiniList = false
+				// 兄弟组件传递数据
+				this.sendSongData(item)
+				// 将点击歌曲加入到播放列表中
+				this.$store.state.playList.push(item)
+				// 打开播放器
 				this.$store.commit('playSwitch')
+				// 播放音乐
+				this.playmusic(item)
 			},
+			// 播放音乐
+			playmusic(item){
+				// SongMusci({
+				// 	id : mid
+				// }).then(res=>{
+				// 	console.log('开始播放')
+				// })
+				// 调用兄弟组件方法 定义自定义方法 并且发布到订阅器
+				Bus.$emit('borplay',item)
+			},
+			// 回退
 			openPlay(){
 				this.$router.go(-1)
 			},
+			// 发送数据函数
 			sendSongData(item){
 				Bus.$emit('transportData',item)
+			},
+			// 播放全部歌曲
+			playAllSongList(){
+				this.$store.state.playList = this.artistListData
 			}
 		},
 		mounted(){
